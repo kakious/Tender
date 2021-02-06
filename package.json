@@ -1,0 +1,30 @@
+{
+  "name": "tender",
+  "version": "0.1.0",
+  "description": "Drunk'n'Stupid Discord Bot",
+  "main": "index.js",
+  "dependencies": {
+    "discord.js": "^12.5.1",
+    "fs": "0.0.1-security",
+    "lowdb": "^1.0.0",
+    "moment": "^2.29.1",
+    "moment-timezone": "^0.5.32",
+    "node-json-db": "^1.1.0",
+    "pm2": "^4.5.1",
+    "redis": "^3.0.2",
+    "safe-buffer": "^5.2.1",
+    "safer-buffer": "^2.1.2",
+    "sylvester": "^0.0.21",
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kakious/Tender.git"
+  },
+  "author": "",
+  "license": "ISC"
+}
