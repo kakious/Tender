@@ -14,7 +14,7 @@
     "redis": "^3.0.2",
     "safe-buffer": "^5.2.1",
     "safer-buffer": "^2.1.2",
-    "sylvester": "^0.0.21",
+    "sylvester": "^0.0.21"
   },
   "devDependencies": {},
   "scripts": {
