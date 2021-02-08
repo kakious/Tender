@@ -1,10 +1,16 @@
-const { Client, Collection } = require('discord.js');
+const {
+	Client,
+	Collection
+} = require('discord.js');
+
 
 module.exports = class extends Client {
 	constructor(config) {
 		super({
 			disableEveryone: false,
 			disabledEvents: ['TYPING_START'],
+			autoReconnect: true,
+			shards: 'auto'
 		});
 
 		this.commands = new Collection();
@@ -12,5 +18,6 @@ module.exports = class extends Client {
 		this.queue = new Map();
 
 		this.config = config;
+
 	}
-};
+}

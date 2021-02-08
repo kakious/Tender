@@ -1,5 +1,5 @@
 const Discord = require('discord.js');
-const updateMessage = require('../roles/update-message');
+const updateMessage = require('../roles/reaction-roles/update-message');
 
 const {
     prefix,

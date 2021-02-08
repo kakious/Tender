@@ -1,8 +1,10 @@
 const Discord = require('discord.js');
 const Client = require('./client/client');
-const client = new Client();
-const roles= require('./roles/roles')
+const roles = require('./roles/roles')
 const eventLoop = require('./events/event_loop');
+const PACKAGE = require('./package.json');
+const audio = require('./audio/audio');
+
 const fs = require('fs');
 const {
     prefix,
@@ -10,10 +12,10 @@ const {
 } = require('./config.json');
 var moment = require('moment-timezone'); // require
 
-
+const client = new Client();
 
 client.commands = new Discord.Collection();
-const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
+const generalCommandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 
 const {
     promisify
@@ -27,17 +29,19 @@ const FileSync = require('lowdb/adapters/FileSync')
 const eventsAdapter = new FileSync('./db/events_db.json')
 const eventsDB = low(eventsAdapter)
 
+
 eventsDB.defaults({
         events: [],
         allowed_users: [],
         announcement_channels: [],
     })
     .write()
-for (const file of commandFiles) {
+
+
+for (const file of generalCommandFiles) {
     const command = require(`./commands/${file}`);
     client.commands.set(command.name, command);
 }
-
 
 
 client.once('disconnect', () => {
@@ -51,11 +55,14 @@ client.once('reconnecting', () => {
 client.once('ready', () => {
     console.log(' ____________\n<____________>\n|            |\n|            |\n|            |\n \\          / \n  \\________/ \n      ||\n      ||\n      ||\n      ||\n   ___||___ \n  /   ||   \\ \n  \\________/ \n');
     console.log('Tender has began serving drinks!');
+    client.manager.init(client.user.id);
     roles(client);
-    setInterval(function () {
-        eventLoop();
-    }, 60000);
+    eventLoop(client);
 });
+
+audio(client);
+
+client.on("raw", (d) => client.manager.updateVoiceState(d));
 
 client.on('message', message => {
     const args = message.content.slice(prefix.length).split(/ +/);
@@ -78,6 +85,5 @@ client.on('message', message => {
         message.reply('There was an issue processing that command! Please contact your admin.')
     }
 });
-
 
 client.login(botToken);

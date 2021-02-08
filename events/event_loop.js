@@ -1,6 +1,7 @@
 const fs = require('fs');
 
 module.exports = client => {
+    setInterval(function () {
         fs.readFile(__dirname + '/../db/events_db.json', (err, datas) => {
             parsedData = JSON.parse(datas);
             events = parsedData.events
@@ -56,4 +57,5 @@ module.exports = client => {
                 });
             });
         });
+    }, 60000);
 }
