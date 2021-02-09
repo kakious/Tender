@@ -1,9 +1,10 @@
 const Discord = require('discord.js');
 const Client = require('./client/client');
 const roles = require('./roles/roles')
-const eventLoop = require('./events/event_loop');
+const loops = require('./loops/loop');
 const PACKAGE = require('./package.json');
 const audio = require('./audio/audio');
+
 
 const fs = require('fs');
 const {
@@ -57,7 +58,8 @@ client.once('ready', () => {
     console.log('Tender has began serving drinks!');
     client.manager.init(client.user.id);
     roles(client);
-    eventLoop(client);
+
+    loops(client);
 });
 
 audio(client);

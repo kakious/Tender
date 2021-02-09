@@ -10,6 +10,7 @@
     "discord.js-lavalink": "^3.0.1",
     "erela.js": "^2.3.2",
     "erela.js-spotify": "^1.2.0",
+    "events": "^3.2.0",
     "ffmpeg": "0.0.4",
     "fluent-ffmpeg": "^2.1.2",
     "fs": "0.0.1-security",

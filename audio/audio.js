@@ -18,15 +18,6 @@ const clientSecret = spotifySecret;
 
 module.exports = client => {
     // Start Lavalink
-
-    var runCommand = 'java -jar ' + __dirname + '/../lavalink/Lavalink.jar'
-    const exec = require('child_process').exec;
-    const childProcess = exec(runCommand, function(err, stdout, stderr) {
-        if (err) {
-            console.log(err)
-        }
-        console.log(stdout)
-    })
     
     client.manager = new Manager({
             // Pass an array of node. Note: You do not need to pass any if you are using the default values (ones shown below).

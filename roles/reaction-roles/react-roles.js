@@ -44,7 +44,7 @@ module.exports = async (client) => {
             return;
         }
 
-        fs.readFile(__dirname + '/../db/events_db.json', (err, datas) => {
+        fs.readFile(__dirname + '/../../db/events_db.json', (err, datas) => {
             parsedData = JSON.parse(datas);
             rchannels = parsedData.reaction_channels;
             rroles = parsedData.reaction_roles;
@@ -95,7 +95,7 @@ module.exports = async (client) => {
             }
         });
     }
-
+    
     client.on('messageReactionAdd', (reaction, user) => {
         handleReaction(reaction, user, true);
     })

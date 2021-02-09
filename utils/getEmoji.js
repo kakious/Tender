@@ -1,0 +1,1 @@
+module.exports = (client, emoji) => emojiName => client.emojis.cache.find(emoji => emoji.name === emojiName);
