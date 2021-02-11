@@ -32,6 +32,15 @@ module.exports = {
             }
         }
 
+        var splitargs = [];
+        var myRegexp = /[^\s"]+|"([^"]*)"/gi;
+        do {
+            var match = myRegexp.exec(withoutPrefix)
+            if (match != null) {
+                splitargs.push(match[1] ? match[1] : match[0]);
+            }
+        } while (match != null);
+
         switch (args[0]) {
             case ('achannel'):
                 if (!message.guild.id)
@@ -81,14 +90,6 @@ module.exports = {
                     return message.reply('You need to be in a server to do this!');
 
                 // SPLITTING ARGS WITH RegEX
-                var splitargs = [];
-                var myRegexp = /[^\s"]+|"([^"]*)"/gi;
-                do {
-                    var match = myRegexp.exec(withoutPrefix)
-                    if (match != null) {
-                        splitargs.push(match[1] ? match[1] : match[0]);
-                    }
-                } while (match != null);
 
                 // ROLE PROCESSING
                 var role = message.guild.roles.cache.find(role => role.name === splitargs[2])
@@ -144,14 +145,7 @@ module.exports = {
             case ('joinrole'):
                 if (!message.guild.id)
                     return message.reply('You need to be in a server to do this!');
-                var splitargs = [];
-                var myRegexp = /[^\s"]+|"([^"]*)"/gi;
-                do {
-                    var match = myRegexp.exec(withoutPrefix)
-                    if (match != null) {
-                        splitargs.push(match[1] ? match[1] : match[0]);
-                    }
-                } while (match != null);
+
                 var role = message.guild.roles.cache.find(role => role.name === splitargs[2])
                 if (typeof role == 'undefined') {
                     var role = message.guild.roles.cache.get(splitargs[2])
@@ -169,24 +163,15 @@ module.exports = {
                     return message.reply('You need to be in a server to do this!');
                 }
 
-                var splitargs = [];
-                var myRegexp = /[^\s"]+|"([^"]*)"/gi;
-                do {
-                    var match = myRegexp.exec(withoutPrefix)
-                    if (match != null) {
-                        splitargs.push(match[1] ? match[1] : match[0]);
-                    }
-                } while (match != null);
+
                 //console.log(splitargs);
                 console.log('ran');
                 console.log(splitargs)
-                var role = message.guild.roles.cache.find(role => role.name === splitargs[2])
-                if (typeof role == 'undefined') {
-                    var role = message.guild.roles.cache.get(splitargs[2])
-                }
+                role = message.mentions.roles.first();
                 //var getEmoji = emojiName => client.emojis.cache.find(emoji => emoji.name === emojiName);
                 if (!role)
                     return message.reply('There is no role with that name.');
+
                 console.log(splitargs[3].split(':'));
                 splitemote = splitargs[3].split(':');
 
@@ -198,36 +183,19 @@ module.exports = {
                     emoteValue = splitargs[3];
                 }
 
-                rcheck1 = eventsDB.get('welcome_roles').find({
-                    emote: emoteValue,
-                    serverID: message.guild.id
-                }).value();
+                channel = message.mentions.channels.first();
 
-                if (rcheck1) {
-                    return message.reply('This emote is already in use for a role.');
-                }
-
-                rcheck2 = eventsDB.get('welcome_roles').find({
-                    roleID: role.id,
-                    serverID: message.guild.id
-                }).value();
-
-                if (rcheck2) {
-                    return message.reply('There is already a emote for this role.')
-                }
-
-                channel = client.channels.cache.get(splitargs[4])
                 channel.send('Add an reaction to claim a role').then(function (fData) {
-                    eventsDB.get('welcome_roles').push({
-                        serverID: message.guild.id,
-                        channelID: splitargs[4],
-                        messageID: fData.id,
-                        roleID: role.id,
-                        emoji: emoteValue
-                    }).write();
+                    client.welcomeroles.set(message.guild.id, {
+                        channel: channel.id,
+                        message: fData.id,
+                        role: role.id,
+                        emote: emoteValue
+                    })
                 });
-                message.reply('You have set your reaction role channel to ' + channel.name);
 
+                message.reply('You have set your reaction role channel to ' + channel.name);
+                updateWelcome(client, message.guild.id);
                 break;
 
             default:

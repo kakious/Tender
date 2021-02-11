@@ -1,21 +1,6 @@
-
 const {
-    SpotifyParser
-} = require('spotilink');
-
-
-const {
-    prefix,
-    spotifyClient,
-    spotifySecret
+    prefix
 } = require('../../config.json');
-
-const node = {
-    host: 'localhost',
-    port: 1234,
-    password: 'password'
-};
-const spotilink = new SpotifyParser(node, spotifyClient, spotifySecret);
 
 module.exports = {
         name: 'groove',

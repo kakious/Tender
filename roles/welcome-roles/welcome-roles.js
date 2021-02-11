@@ -7,20 +7,16 @@ module.exports = async (client) => {
     const getEmoji = emojiName => client.emojis.cache.find(emoji => emoji.name === emojiName);
 
     var guildList = client.welcomeroles.indexes;
-    let emojiText = 'Click the emote to gain entry to the servers\n\n'
+    console.log(guildList)
+    let emojiText = 'Click the emote to gain entry to the server\n\n'
     const reactions = [];
     guildList.forEach(function (guildID) {
-        const guild = client.guilds.cache.get(guildID);
         guildData = client.welcomeroles.get(guildID);
         const emoji = getEmoji(guildData.emote);
         if (typeof emoji == 'undefined') {
             reactions.push(guildData.emote);
-            const role = guild.roles.cache.get(guildData.role).name;
-            emojiText += `${role}\n`
         } else {
             reactions.push(emote);
-            const role = guild.roles.cache.get(sguildData.role).name;
-            emojiText += `${role}\n`
         }
         firstMessage(client, guildData.channel, emojiText, reactions, guildData.message)
     })
@@ -41,8 +37,8 @@ module.exports = async (client) => {
             guild
         } = reaction.message;
 
-        const addRole = guild.roles.cache.get(wData.roleID);
-        console.log(addRole.name + ':' + remRole.name)
+        const addRole = guild.roles.cache.get(guildData.role);
+        console.log(addRole.name)
 
         const member = guild.members.cache.find(member => member.id === user.id)
         console.log(`${member.user.username} has accepted the rules.`);

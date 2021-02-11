@@ -1,11 +1,5 @@
 const firstMessage = require('./first-message');
 //const firstJoin = require('./first-join');
-const fs = require('fs');
-
-const {
-    prefix
-} = require('../../config.json');
-
 // Core Module for Reaction Roles and New Roles
 
 module.exports = async (client) => {
@@ -52,7 +46,7 @@ module.exports = async (client) => {
         var emote;
         reactionRole.emotes.forEach(function (emoteData) {
             if (emoteData.emote === reaction._emoji.name) {
-                emote = emote;
+                emoteData.emote = emote;
             }
         })
 
@@ -60,6 +54,10 @@ module.exports = async (client) => {
             guild
         } = reaction.message
 
+        if (!emote)
+        {
+            return;
+        }
         if (!emote.role) {
             return;
         }

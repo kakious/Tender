@@ -6,10 +6,20 @@ const addReactions = (message, reactions) => {
     }
 }
 
-module.exports = async (client, id) => {
-    const channel = await client.channels.fetch(id);
+module.exports = async (client, guildID) => {
+    welcomeData = client.welcomeroles.get(guildID);
+
+    const channel = await client.channels.fetch(welcomeData.channel);
+    const emoji = getEmoji(welcomeData.emote);
+    let emojiText = 'Click the emote to gain entry to the server\n\n'
+    reactions = [];
+    if (typeof emoji == 'undefined') {
+        reactions.push(welcomeData.emote);
+    } else {
+        reactions.push(emote);
+    }
     channel.messages.fetch({
-        around: messageid,
+        around: welcomeData.message,
         limit: 1
     }).then((messages) => {
         if (messages.size === 0) {
@@ -18,7 +28,7 @@ module.exports = async (client, id) => {
         } else {
             // Edit the exising messages
             for (const message of messages) {
-                message[1].edit(text, reactions);
+                message[1].edit(emojiText, reactions);
                 addReactions(message[1], reactions);
             }
         }
