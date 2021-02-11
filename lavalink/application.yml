@@ -31,7 +31,7 @@ metrics:
     endpoint: /metrics
 
 sentry:
-  dsn: ""
+  dsn: "https://9645de42912f4970a2afe4499a96ea16@o72612.ingest.sentry.io/156130"
   environment: ""
 #  tags:
 #    some_key: some_value
@@ -41,7 +41,7 @@ logging:
   file:
     max-history: 30
     max-size: 1GB
-  path: ./logs/
+  path: ../logs/
 
   level:
     root: INFO

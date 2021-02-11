@@ -8,8 +8,11 @@
     "child_process": "^1.0.2",
     "discord.js": "^12.5.1",
     "discord.js-lavalink": "^3.0.1",
+    "enmap": "^5.8.4",
+    "enmap-rethink": "^2.1.2",
     "erela.js": "^2.3.2",
     "erela.js-spotify": "^1.2.0",
+    "events": "^3.2.0",
     "ffmpeg": "0.0.4",
     "fluent-ffmpeg": "^2.1.2",
     "fs": "0.0.1-security",
@@ -26,7 +29,6 @@
     "sylvester": "^0.0.21",
     "ytdl-core": "^4.4.5"
   },
-  "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js"

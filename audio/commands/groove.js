@@ -1,22 +1,6 @@
-const low = require('lowdb')
-const FileSync = require('lowdb/adapters/FileSync');
 const {
-    SpotifyParser
-} = require('spotilink');
-const adapter = new FileSync('db.json')
-const db = low(adapter)
-const {
-    prefix,
-    spotifyClient,
-    spotifySecret
-} = require('../config.json');
-
-const node = {
-    host: 'localhost',
-    port: 1234,
-    password: 'password'
-};
-const spotilink = new SpotifyParser(node, spotifyClient, spotifySecret);
+    prefix
+} = require('../../config.json');
 
 module.exports = {
         name: 'groove',
