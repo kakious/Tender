@@ -4,6 +4,7 @@ const roles = require('./roles/roles')
 const loops = require('./loops/loop');
 const PACKAGE = require('./package.json');
 const audio = require('./audio/audio');
+const db = require('./db/db');
 
 
 const fs = require('fs');
@@ -24,19 +25,7 @@ const {
 
 var s0 = new Array()
 
-const low = require('lowdb')
-const FileSync = require('lowdb/adapters/FileSync')
 
-const eventsAdapter = new FileSync('./db/events_db.json')
-const eventsDB = low(eventsAdapter)
-
-
-eventsDB.defaults({
-        events: [],
-        allowed_users: [],
-        announcement_channels: [],
-    })
-    .write()
 
 
 for (const file of generalCommandFiles) {
@@ -53,16 +42,17 @@ client.once('reconnecting', () => {
     console.log('Lost connection to Discord. Reconnecting....');
 });
 
+db(client);
+audio(client);
+
 client.once('ready', () => {
     console.log(' ____________\n<____________>\n|            |\n|            |\n|            |\n \\          / \n  \\________/ \n      ||\n      ||\n      ||\n      ||\n   ___||___ \n  /   ||   \\ \n  \\________/ \n');
     console.log('Tender has began serving drinks!');
     client.manager.init(client.user.id);
     roles(client);
-
     loops(client);
 });
 
-audio(client);
 
 client.on("raw", (d) => client.manager.updateVoiceState(d));
 
@@ -75,17 +65,16 @@ client.on('message', message => {
     if (!message.content.startsWith(prefix)) return;
 
     try {
-        if (commandName == 'createevent') {
-            command.execute(message, client);
-        } else if (commandName == 'allowevents') {
+        if (command) {
             command.execute(message, client);
         } else {
-            command.execute(message, client);
+            return;
         }
     } catch (error) {
+        console.log(`There was an error processing a command for server ${message.guild.id}`)
         console.log(error);
-        message.reply('There was an issue processing that command! Please contact your admin.')
-    }
+        message.react('❌');
+      }
 });
 
 client.login(botToken);
