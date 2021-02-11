@@ -9,7 +9,7 @@ module.exports = {
     // ->test ( Tests if the bot is working....)
     description: 'Test',
         execute(message) {
-            console.log(message.author.id);
+            console.log(message.content);
             message.channel.send('The test command works!!!');
         },
 }

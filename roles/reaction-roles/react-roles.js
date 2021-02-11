@@ -9,93 +9,72 @@ const {
 // Core Module for Reaction Roles and New Roles
 
 module.exports = async (client) => {
-    //const getEmoji = emojiName => client.emojis.cache.get(emojiName);
     const getEmoji = emojiName => client.emojis.cache.find(emoji => emoji.name === emojiName);
-
-    fs.readFile(__dirname + '/../../db/events_db.json', (err, datas) => {
-        parsedData = JSON.parse(datas);
-        rchannels = parsedData.reaction_channels;
-        rroles = parsedData.reaction_roles;
-
-        rchannels.forEach(function (server) {
-            const guild = client.guilds.cache.get(server.serverID);
-            //console.log(guild)
-            //console.log(server.reactionsID + ':' + server.messageID)
-            const reactions = [];
-            let emojiText = 'Add an reaction to claim a role\n\n'
-            rroles.forEach(function (key) {
-                const emoji = getEmoji(key.emoji);
+    var guildList = client.reactionroles.indexes;
+    // Handle first bot update and cache initalization.
+    guildList.forEach(function (guild) {
+        const guilds = client.guilds.cache.get(guild);
+        guildData = client.reactionroles.get(guild);
+        const reactions = [];
+        let emojiText = 'Add an reaction to claim a role\n\n'
+        emotes = client.reactionroles.get(guild, 'emotes');
+        if (emotes.length != '0') {
+            emotes.forEach(function (reactionRole) {
+                const emoji = getEmoji(reactionRole.emote);
                 if (typeof emoji == 'undefined') {
-                    reactions.push(key.emoji);
-                    const role = guild.roles.cache.get(key.roleID).name
-                    emojiText += `${key.emoji} = ${role}\n`
+                    reactions.push(reactionRole.emote);
+                    const role = guilds.roles.cache.get(reactionRole.role).name
+                    emojiText += `${reactionRole.emote} = ${role}\n`
                 } else {
                     reactions.push(emoji);
-                    const role = guild.roles.cache.get(key.roleID).name
+                    const role = guilds.roles.cache.get(reactionRole.role).name
                     emojiText += `${emoji} = ${role}\n`
                 }
+                //console.log(reactionRole);
             })
-            firstMessage(client, server.reactionsID, emojiText, reactions, server.messageID);
-        })
-    });
+            firstMessage(client, guildData.channel, emojiText, reactions, guildData.message);
+        }
+    })
 
+    // Handle reaction to emote;
     const handleReaction = (reaction, user, add) => {
         if (user.id === client.user.id) {
             return;
         }
 
-        fs.readFile(__dirname + '/../../db/events_db.json', (err, datas) => {
-            parsedData = JSON.parse(datas);
-            rchannels = parsedData.reaction_channels;
-            rroles = parsedData.reaction_roles;
-            var channel;
-            var roleName;
+        reactionRole = client.reactionroles.get(reaction.message.guild.id);
+        //console.log(channel.serverID)
+        if (typeof reactionRole == 'undefined')
+            return;
 
-            rchannels.some(function (data) {
-                if (data.reactionsID === reaction.message.channel.id) {
-                    //console.log(data);
-                    if (data.messageID === reaction.message.id) {
-                        channel = data;
-                        return true;
-                    }
-                }
-            })
+        //console.log(reaction);
 
-            //console.log(channel.serverID)
-            if (!channel)
-                return;
-
-            rroles.some(function (data) {
-                if (data.emoji === reaction._emoji.name) {
-                    roleName = data.roleID;
-                    return true;
-                }
-            })
-
-            //console.log(reaction);
-            const emoji = reaction._emoji.name;
-
-            const {
-                guild
-            } = reaction.message
-
-            if (!roleName) {
-                return;
+        var emote;
+        reactionRole.emotes.forEach(function (emoteData) {
+            if (emoteData.emote === reaction._emoji.name) {
+                emote = emote;
             }
+        })
 
-            const role = guild.roles.cache.get(roleName);
-            const member = guild.members.cache.find(member => member.id === user.id)
-            if (add) {
-                //console.log(reaction)
-                console.log('Assigning role ' + role.name + ' to user ' + member.user.username)
-                member.roles.add(role);
-            } else {
-                console.log('Removing role ' + role.name + ' to user ' + member.user.username)
-                member.roles.remove(role);
-            }
-        });
+        const {
+            guild
+        } = reaction.message
+
+        if (!emote.role) {
+            return;
+        }
+
+        const role = guild.roles.cache.get(emote.role);
+        const member = guild.members.cache.find(member => member.id === user.id)
+        if (add) {
+            console.log('Assigning role ' + role.name + ' to user ' + member.user.username)
+            member.roles.add(role);
+        } else {
+            console.log('Removing role ' + role.name + ' to user ' + member.user.username)
+            member.roles.remove(role);
+        }
     }
-    
+
     client.on('messageReactionAdd', (reaction, user) => {
         handleReaction(reaction, user, true);
     })

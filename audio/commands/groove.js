@@ -1,15 +1,14 @@
-const low = require('lowdb')
-const FileSync = require('lowdb/adapters/FileSync');
+
 const {
     SpotifyParser
 } = require('spotilink');
-const adapter = new FileSync('db.json')
-const db = low(adapter)
+
+
 const {
     prefix,
     spotifyClient,
     spotifySecret
-} = require('../config.json');
+} = require('../../config.json');
 
 const node = {
     host: 'localhost',

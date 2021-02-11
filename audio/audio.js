@@ -9,12 +9,14 @@ const {
 const {
     spotifyClient,
     spotifySecret,
+    defaultColor
 } = require('../config.json');
 
 const Spotify = require("erela.js-spotify");
 
 const clientID = spotifyClient;
 const clientSecret = spotifySecret;
+const color = defaultColor;
 
 module.exports = client => {
     // Start Lavalink
@@ -50,11 +52,13 @@ module.exports = client => {
         .on("nodeConnect", node => console.log(`Node ${node.options.identifier} connected`))
         .on("nodeError", (node, error) => console.log(`Node ${node.options.identifier} had an error: ${error.message}`))
         .on("trackStart", (player, track) => {
+            console.log(color)
             var embed = new Discord.MessageEmbed()
                 .setTitle('Now Playing')
                 .setDescription(`${track.title}`)
                 .setFooter(`Track Length: ${customUtils.msToTime(track.duration)} | Requested By: ${track.requester.tag}`)
                 .setThumbnail(track.thumbnail)
+                .setColor(color)
             client.user.setPresence({
                 status: "online", //You can show online, idle....
                 game: {

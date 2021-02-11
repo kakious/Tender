@@ -1,61 +1,63 @@
 const fs = require('fs');
+const moment = require('moment-timezone')
+const Discord = require('discord.js');
 
 module.exports = client => {
     setInterval(function () {
-        fs.readFile(__dirname + '/../db/events_db.json', (err, datas) => {
-            parsedData = JSON.parse(datas);
-            events = parsedData.events
-            announcementChannels = parsedData.announcement_channels
-            let now = new Date();
-            events.forEach(function (data) {
-                announcementChannels.forEach(function (channel) {
-                    if (data.serverID == channel.serverID) {
-                        client.channels.fetch(channel.announcementID).then(channel => {
-                            channel.messages.fetch({
-                                around: data.eventID,
-                                limit: 1
-                            }).then(messages => {
-                                var color = data.eventColor ? data.eventColor : '#af10e8';
-                                var time = moment.utc(data.eventTime);
-                                let eventDate = new Date(data.eventTime);
-                                var embed = new Discord.MessageEmbed()
-                                    .setColor(color)
-                                    .setTitle(data.eventTitle)
-                                    .setDescription(data.eventDescription)
-                                    .addFields({
-                                        name: "Time until event starts",
-                                        value: moment(time).fromNow(),
-                                    }, {
-                                        name: "Hosted By",
-                                        value: data.eventHost,
-                                    }, {
-                                        name: "CST",
-                                        value: moment(time).tz("America/Chicago").format('LLL'),
-                                        inline: true
-                                    }, {
-                                        name: "UTC",
-                                        value: time.format('LLL'),
-                                        inline: true,
-                                    }, {
-                                        name: "CET",
-                                        value: moment(time).tz("Europe/Vienna").format('LLL'),
-                                        inline: true,
-                                    })
-                                    .setFooter('Created by ' + data.eventAuthor)
-                                    .setImage(data.eventImageUrl)
-                                messages.first().edit(embed);
-                                if (eventDate < now) {
-                                    channel.send("<@everyone>" + ", The event " + data.eventTitle + ' has started!!!');
-                                    parsedData.events = events.filter((events) => {
-                                        return events.eventID !== data.eventID
-                                    });
-                                    fs.writeFileSync(__dirname + '/../db/events_db.json', JSON.stringify(parsedData, null, 2));
-                                }
-                            })
+        guildList = client.events.indexes;
+
+        let now = new Date();
+
+        guildList.forEach(function (guildID) {
+            channelID = client.settings.get(guildID, 'announcementChannel');
+            eventData = client.events.get(guildID, 'events')
+            if (channelID === null)
+                return;
+            channel = client.channels.cache.get(channelID);
+
+            if (!channel)
+                return;
+
+            eventData.forEach(function (event) {
+                channel.messages.fetch({
+                    around: event.message,
+                    limit: 1
+                }).then(message => {
+                    var color = event.eventColor ? event.eventColor : '#af10e8';
+                    var time = moment.utc(event.eventTime);
+                    let eventDate = new Date(event.eventTime);
+                    var embed = new Discord.MessageEmbed()
+                        .setColor(color)
+                        .setTitle(event.eventTitle)
+                        .setDescription(event.eventDescription)
+                        .addFields({
+                            name: "Time until event starts",
+                            value: moment(time).fromNow(),
+                        }, {
+                            name: "Hosted By",
+                            value: event.eventHost,
+                        }, {
+                            name: "CST",
+                            value: moment(time).tz("America/Chicago").format('LLL'),
+                            inline: true
+                        }, {
+                            name: "UTC",
+                            value: time.format('LLL'),
+                            inline: true,
+                        }, {
+                            name: "CET",
+                            value: moment(time).tz("Europe/Vienna").format('LLL'),
+                            inline: true,
                         })
+                        .setFooter('Created by ' + event.eventAuthor)
+                        .setImage(event.eventImageURL)
+                    message.first().edit(embed);
+                    if (eventDate < now) {
+                        channel.send("@everyone" + ", The event " + event.eventTitle + ' has started!!!');
+                        client.events.remove(guildID, event, 'events');
                     }
-                });
-            });
-        });
-    }, 60000);
+                })
+            })
+        })
+    }, 5000);
 }
