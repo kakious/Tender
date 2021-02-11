@@ -46,7 +46,7 @@ module.exports = async (client) => {
         var emote;
         reactionRole.emotes.forEach(function (emoteData) {
             if (emoteData.emote === reaction._emoji.name) {
-                emoteData.emote = emote;
+                emote = emoteData.emote;
             }
         })
 

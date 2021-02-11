@@ -1,4 +1,3 @@
-const Discord = require('discord.js');
 module.exports = {
     name: "play",
     description: "Play a song in your channel!",
