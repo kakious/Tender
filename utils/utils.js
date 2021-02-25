@@ -5,3 +5,6 @@ exports.msToTime = require('./msToTime.js');
 
 // Get the emoji information from a name.
 exports.getEmoji = require('./getEmoji');
+
+// Permission Checks
+exports.permCheck = require('./permCheck')

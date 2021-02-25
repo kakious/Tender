@@ -21,12 +21,15 @@
     "moment-timezone": "^0.5.32",
     "node-fetch": "^2.6.1",
     "node-json-db": "^1.1.0",
+    "pino": "^6.11.1",
     "pm2": "^4.5.4",
     "redis": "^3.0.2",
     "safe-buffer": "^5.2.1",
     "safer-buffer": "^2.1.2",
+    "socket.io-client": "^3.1.1",
     "spotilink": "^1.4.1",
     "sylvester": "^0.0.21",
+    "vrchat-client": "^0.2.3",
     "ytdl-core": "^4.4.5"
   },
   "scripts": {

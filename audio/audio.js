@@ -20,7 +20,7 @@ const color = defaultColor;
 
 module.exports = client => {
     // Start Lavalink
-    
+
     client.manager = new Manager({
             // Pass an array of node. Note: You do not need to pass any if you are using the default values (ones shown below).
             nodes: [
@@ -52,18 +52,18 @@ module.exports = client => {
         .on("nodeConnect", node => console.log(`Node ${node.options.identifier} connected`))
         .on("nodeError", (node, error) => console.log(`Node ${node.options.identifier} had an error: ${error.message}`))
         .on("trackStart", (player, track) => {
-            console.log(color)
             var embed = new Discord.MessageEmbed()
                 .setTitle('Now Playing')
                 .setDescription(`${track.title}`)
                 .setFooter(`Track Length: ${customUtils.msToTime(track.duration)} | Requested By: ${track.requester.tag}`)
                 .setThumbnail(track.thumbnail)
-                .setColor(color)
+                .setColor(color);
+                
             client.user.setPresence({
                 status: "online", //You can show online, idle....
                 game: {
-                    name: `to ${track.title}`, //The message shown
-                    type: "LISTENING" //PLAYING: WATCHING: LISTENING: STREAMING:
+                    name: `${track.title}`, //The message shown
+                    type: "PLAYING" //PLAYING: WATCHING: LISTENING: STREAMING:
                 }
             });
             client.channels.cache
@@ -74,8 +74,8 @@ module.exports = client => {
             client.channels.cache
                 .get(player.textChannel)
                 .send("Queue has ended.");
-
             player.destroy();
+
         });
 
 

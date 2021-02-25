@@ -1,6 +1,7 @@
 const Discord = require('discord.js');
 const updateMessage = require('../roles/reaction-roles/update-message');
-const updateWelcome = require('../roles/welcome-roles/update-message')
+const updateWelcome = require('../roles/welcome-roles/update-message');
+const customUtils = require('../utils/utils')
 const {
     prefix,
 } = require('../config.json');
@@ -13,16 +14,10 @@ module.exports = {
         const split = withoutPrefix.split(/ +/);
         const args = split.slice(1);
 
-        ownercheck = (message.guild.owner.id === message.author.id);
+        pcheck = customUtils.permCheck(client, message);
 
-
-        if (!ownercheck) {
-            pcheck = client.settings.get(message.guild.i, adminRole);
-            if (!message.guild.members.cache.get(message.author.id).roles.cache.has(pcheck)) {
-                console.log(message.author.username + ' tried to add a user but is not allowed.')
-                return message.reply('You do not have permissions to do this!');
-            }
-        }
+        if (!pcheck)
+            return;
 
         var splitargs = [];
         var myRegexp = /[^\s"]+|"([^"]*)"/gi;
@@ -39,7 +34,7 @@ module.exports = {
                     return message.reply('You need to be in a server to do this!')
                 channel = message.mentions.channels.first();
                 client.settings.set(message.guild.id, channel.id, 'announcementChannel')
-                return message.reply('You have set your announcement channel to ' + channel.name);
+                message.reply('You have set your announcement channel to ' + channel.name);
                 break;
 
             case ('admin'):
@@ -138,7 +133,7 @@ module.exports = {
                 if (!message.guild.id)
                     return message.reply('You need to be in a server to do this!');
 
-                var role = message.guild.roles.cache.find(role => role.name === splitargs[2])
+                var role = message.mentions.roles.first();
                 if (typeof role == 'undefined') {
                     var role = message.guild.roles.cache.get(splitargs[2])
                 }

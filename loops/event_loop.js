@@ -18,17 +18,14 @@ module.exports = client => {
                 return;
 
             eventData.forEach(function (event) {
-                channel.messages.fetch({
-                    around: event.message,
-                    limit: 1
-                }).then(message => {
+                channel.messages.fetch(event.message,).then(message => {
                     var color = event.eventColor ? event.eventColor : '#af10e8';
                     var time = moment.utc(event.eventTime);
                     let eventDate = new Date(event.eventTime);
                     var embed = new Discord.MessageEmbed()
                         .setColor(color)
                         .setTitle(event.eventTitle)
-                        .setDescription(event.eventDescription)
+                        .setDescription(`@everyone, ${event.eventDescription}`)
                         .addFields({
                             name: "Time until event starts",
                             value: moment(time).fromNow(),
@@ -50,7 +47,12 @@ module.exports = client => {
                         })
                         .setFooter('Created by ' + event.eventAuthor)
                         .setImage(event.eventImageURL)
-                    message.first().edit(embed);
+                    try {
+                        message.first().edit(embed);
+                    } catch {
+                        console.log(`There was an error with event ID ${event.id} from serverID ${guildID}. Deleting event from database.`)
+                        client.events.remove(guildID, event, 'events');
+                    }
                     if (eventDate < now) {
                         channel.send("@everyone" + ", The event " + event.eventTitle + ' has started!!!');
                         client.events.remove(guildID, event, 'events');
