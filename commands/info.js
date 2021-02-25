@@ -1,5 +1,5 @@
 const Discord = require('discord.js');
-
+const Package = require('../package.json');
 module.exports = {
     name: 'info',
     description: 'Get info about the bot.',
@@ -9,6 +9,7 @@ module.exports = {
         var numhours = Math.floor(((seconds % 31536000) % 86400) / 3600)? Math.floor(((seconds % 31536000) % 86400) / 3600).toFixed(0) + ' hours ': '';
         var numminutes = Math.floor((((seconds % 31536000) % 86400) % 3600) / 60) ? Math.floor((((seconds % 31536000) % 86400) % 3600) / 60).toFixed(0)  + ' minutes ': '';
         var numseconds = Math.floor((((seconds % 31536000) % 86400) % 3600) % 60).toFixed(0) + ' seconds';
+        dependencies = Package.dependencies;
         var embed = new Discord.MessageEmbed()
             .setColor('#0099ff')
             .addFields({
@@ -20,8 +21,12 @@ module.exports = {
                 value: process.version,
                 inline: true
             }, {
+                name: 'Discord.JS Version',
+                value: dependencies[ 'discord.js' ],
+                inline: true
+            }, {
                 name: 'About Tender',
-                value: 'Handcrafted from the finest brewerys Tender is a purpose made bot for the Drunk\'n\'Stupid Discord Server to help track events and other functions.'
+                value: `Handcrafted from the finest brewerys Tender is a purpose made bot for the Drunk\'n\'Stupid Discord Server to help track events and other functions.`
             }, {
                 name: 'Uptime',
                 value: numdays +  numhours + numminutes + numseconds,

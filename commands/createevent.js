@@ -4,6 +4,7 @@ const {
 } = require('../config.json');
 var moment = require('moment-timezone'); // require
 const Discord = require('discord.js');
+const customUtils = require('../utils/utils');
 
 module.exports = {
     name: 'createevent',
@@ -11,11 +12,11 @@ module.exports = {
     description: 'Create a new event in your announcement channel',
     execute(message, client) {
 
-        //if (!pcheck) {
-        //    console.log(message.author.username + ' tried to add a user but is not allowed.')
-        //    return message.reply('You do not have permissions to do this!');
-        //}
+        pcheck = customUtils.permCheck(client, message);
 
+        if (!pcheck)
+            return;
+            
         channelID = client.settings.get(message.guild.id, 'announcementChannel');
         if (channelID === null) {
             return message.reply(`You do not have an announcement channel setup. Please do that and then try again.`);
@@ -60,7 +61,7 @@ module.exports = {
             var embed = new Discord.MessageEmbed()
                 .setColor(color)
                 .setTitle(splitargs[2])
-                .setDescription(splitargs[3])
+                .setDescription(`@everyone, ${splitargs[3]}`)
                 .addFields({
                     name: "Time until event starts",
                     value: moment(time).fromNow(),
@@ -83,7 +84,7 @@ module.exports = {
                 .setFooter('Created by ' + message.author.username)
                 .setImage(splitargs[6]);
 
-                // Doing channel setup
+            // Doing channel setup
             channel = client.channels.cache.get(channelID);
             return channel.send(embed).then(function (dMessage) {
                 client.events.push(message.guild.id, {

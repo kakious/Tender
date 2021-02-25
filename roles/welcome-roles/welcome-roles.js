@@ -7,18 +7,19 @@ module.exports = async (client) => {
     const getEmoji = emojiName => client.emojis.cache.find(emoji => emoji.name === emojiName);
 
     var guildList = client.welcomeroles.indexes;
-    console.log(guildList)
     let emojiText = 'Click the emote to gain entry to the server\n\n'
     const reactions = [];
     guildList.forEach(function (guildID) {
         guildData = client.welcomeroles.get(guildID);
-        const emoji = getEmoji(guildData.emote);
-        if (typeof emoji == 'undefined') {
-            reactions.push(guildData.emote);
-        } else {
-            reactions.push(emote);
+        if (guildData.channel !== null) {
+            const emoji = getEmoji(guildData.emote);
+            if (typeof emoji == 'undefined') {
+                reactions.push(guildData.emote);
+            } else {
+                reactions.push(emote);
+            }
+            firstMessage(client, guildData.channel, emojiText, reactions, guildData.message)
         }
-        firstMessage(client, guildData.channel, emojiText, reactions, guildData.message)
     })
 
     const handleReaction = (reaction, user) => {
@@ -29,10 +30,18 @@ module.exports = async (client) => {
         guildData = client.welcomeroles.get(reaction.message.guild.id);
         settingData = client.settings.get(reaction.message.guild.id);
 
-        if (guildData === null) {
+        if (guildData === null || typeof guildData === 'undefined') {
             return;
         }
 
+        if (guildData.channel !== reaction.message.channel) {
+            return;
+        }
+
+        if (guildData.message !== reaction.message.id) {
+            return;
+        }
+        
         const {
             guild
         } = reaction.message;

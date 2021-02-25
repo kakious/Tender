@@ -6,12 +6,11 @@ module.exports = {
 	execute(message) {
 		let str = '';
 		const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
-
+		embedData = [];
 		for (const file of commandFiles) {
 			const command = require(`./${file}`);
-			str += `Name: ${command.name}, Description: ${command.description} \n`;
+			str += `**Name: ${command.name}**, Description: ${command.description} \n`;
 		}
-
 		message.channel.send(str);
 	},
 };

@@ -1,3 +1,8 @@
+const Discord = require('discord.js');
+const {
+    defaultColor
+} = require('../../config.json');
+const color = defaultColor;
 module.exports = {
     name: "play",
     description: "Play a song in your channel!",
@@ -11,6 +16,27 @@ module.exports = {
         if (!channel) return message.reply('you need to join a voice channel.');
         if (!args.length) return message.reply('you need to give me a URL or a search term.');
 
+        switch (args[0].substr(0, args[0].indexOf(':'))) {
+            case ('rtmp'):
+            case ('rtsp'):
+                channel.join()
+                    .then((connection) => {
+                        connection.play(args[0])
+                        console.log(`${message.author.username} has started playing ${args[0]}`)
+                        var embed = new Discord.MessageEmbed()
+                            .setTitle('Now Playing')
+                            .setDescription(`${args[0]}`)
+                            .setFooter(`Unable to get timestamp. Raw Audio Stream | Requested By: ${message.author.tag}`)
+                            .setColor(color);
+                        message.channel.send(embed);
+                        client.customQueue.set(message.guild.id, {
+                            connection: connection
+                        });
+                        return;
+                    });
+                return;
+                break;
+        }
         const player = message.client.manager.create({
             guild: message.guild.id,
             voiceChannel: channel.id,

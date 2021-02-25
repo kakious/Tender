@@ -58,6 +58,18 @@ module.exports = client => {
         }
     });
 
+    client.VRCDB = new Enmap({
+        name: "VRCHAT_LINK",
+        persistent: true,
+        fetchAll: false,
+        autoFetch: true,
+        cloneLevel: 'deep',
+        autoEnsure: {
+            vrc_id: null,
+            auto_invite: false,
+        }
+    });
+
     client.birthdays = new Enmap({
         name: "birthdays",
         persistent: true,
@@ -66,7 +78,6 @@ module.exports = client => {
         cloneLevel: 'deep',
         autoEnsure: {
             channel: null,
-
         }
     });
 }
